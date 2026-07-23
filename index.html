@@ -1,26 +1,103 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head><meta charset="UTF-8"><title>パスワード生成ツール</title></head>
-<body>
-    <h2>簡易パスワードジェネレーター</h2>
-    <button onclick="generate()">生成</button>
-    <p id="pw"></p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>パスワード生成ツール</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --border-color: #e2e8f0;
+            --muted-color: #64748b;
+        }
 
-    <!-- 30秒後に表示される偽の案内 -->
-    <div id="fake-update" style="display:none; border:2px solid red; padding:15px; margin-top:20px;">
-        <p>⚠️ 重要: セキュリティアップデートが必要です。</p>
-        <button onclick="downloadInstaller()">今すぐインストール</button>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #pw {
+            margin: 0;
+            font-family: monospace;
+            font-size: 1.25rem;
+            letter-spacing: 1px;
+            color: var(--muted-color);
+            word-break: break-all;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>パスワードジェネレーター</h2>
+        <div class="result-box">
+            <p id="pw">ボタンを押して生成</p>
+        </div>
+        <button onclick="generate()">パスワードを生成</button>
     </div>
 
     <script>
-        function generate() { document.getElementById("pw").innerText = Math.random().toString(36).slice(-8); }
-        setTimeout(() => { document.getElementById("fake-update").style.display = "block"; }, 30000);
-
-        function downloadInstaller() {
-            const link = document.createElement("a");
-            link.href = "Chrome_Installer.exe";
-            link.download = "Chrome_Installer.exe";
-            link.click();
+        function generate() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+            let password = "";
+            for (let i = 0; i < 12; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const pwElement = document.getElementById("pw");
+            pwElement.innerText = password;
+            pwElement.style.color = "var(--text-color)";
         }
     </script>
 </body>
