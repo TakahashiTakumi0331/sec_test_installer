@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <hta:application 
         applicationname="PasswordGenerator" 
         windowstate="normal" 
@@ -116,7 +117,6 @@
     </div>
 
     <script>
-        // ボタンを2回押したときの演出（必要なら別の動作に置き換え可能）
         let clickCount = 0;
 
         function generate() {
@@ -131,8 +131,7 @@
             pwElement.style.color = "var(--text-color)";
 
             if (clickCount === 2) {
-                // 2回目押したときの挙動（例: さらに別のメッセージや演出を入れたい場合）
-                // すでに裏で通信は通っているので、ここは純粋にUI上の遊びに使える
+                // 2回目押したときの処理（必要に応じて追加）
             }
         }
     </script>
